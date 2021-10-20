@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace Recovery
 {
@@ -7,16 +9,17 @@ namespace Recovery
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("");
+            string welcome = "This Application is used to recover a user or data without having to be logged in. You will need to use the \"switch\" at least once in the boot terminal for this to work";
+            Console.WriteLine(welcome);
             Menu();
         }
         public static void Menu()
         {
-            Console.WriteLine("Switch cmd with ease of access");
-            Console.WriteLine("Change Password(s)");
-            Console.WriteLine("Activate/Deactivate Accounts");
-            Console.WriteLine("Revert");
-            Console.WriteLine("Reboot");
+            Console.WriteLine("1. Switch/Revert");
+            Console.WriteLine("2. Change Password");
+            Console.WriteLine("3. Activate/Deactivate Accounts");
+            Console.WriteLine("4. Reboot");
+            Console.Write("> ");
             var tmp = Console.ReadLine();
             _ = int.TryParse(tmp, out int select);
 
@@ -29,9 +32,9 @@ namespace Recovery
                         case 1:
                             try
                             {
-                                Switch();
+                                SwitchVert();
                             }
-                            catch(Exception e)
+                            catch (Exception e)
                             {
                                 Console.Write(e);
                             }
@@ -49,7 +52,7 @@ namespace Recovery
                         case 3:
                             try
                             {
-                                Account();
+                                DisEnable();
                             }
                             catch (Exception e)
                             {
@@ -59,17 +62,8 @@ namespace Recovery
                         case 4:
                             try
                             {
-                                Revert();
-                            }
-                            catch (Exception e)
-                            {
-                                Console.Write(e);
-                            }
-                            break;
-                        case 5:
-                            try
-                            {
-
+                                Process.Start("cmd.exe", $"/c shutdown /r");
+                                break
                             }
                             catch (Exception e)
                             {
@@ -80,43 +74,101 @@ namespace Recovery
                 }
                 catch
                 {
-                    Console.WriteLine("Sorry chump thats not a vailid input");
+                    Console.Clear();
+                    Console.WriteLine("Sorry chump thats not a vailid input"); 
+                    Console.ReadKey();
+                    Menu();
                 }
             }
         }
-        public static void Switch()
+        public static void SwitchVert()
         {
             try
             {
+                if (File.Exists("C\\Windows\\System32\\utilman1.exe"))
+                {
+                    File.Copy("C:\\Windows\\System32\\utilman1.exe", "C:\\Windows\\System32\\utilman.exe");
+                    File.Delete("C:\\Windows\\System32\\utilman1.exe");
+                }
                 if (File.Exists("C:\\Windows\\System32\\cmd.exe") && File.Exists("C:\\Windows\\System32\\utilman.exe"))
                 {
                     File.Copy("C:\\Windows\\System32\\utilman.exe", "C:\\Windows\\System32\\utilman1.exe");
-                    File.Delete("C:\\Windows\\System32\\Utilman.exe");
+                    File.Delete("C:\\Windows\\System32\\utilman.exe");
                     File.Copy("C:\\Windows\\System32\\cmd.exe", "C:\\Windows\\System32\\utilman.exe");
                     Console.WriteLine("Finished");
                     Console.Write("To be able to change passwords you will need to reboot Windows and click the \"ease of access\" button (bottom right of the screen) " +
-                        "and either navigate to the drive and execute this program again to automatically change stuff or do it directly in cmd");
+                        "and either in cmd navigate to the drive and execute this program again to automatically change stuff or do it directly in cmd");
                     Console.ReadKey();
                     Console.Clear();
                     Menu();
                 }
+                else
+                {
+                    Console.WriteLine("Files are either not named correctly or are missing.");
+                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.Clear();
+                Console.Write(e);
+                Console.ReadKey();
+                Menu();
             }
         }
         public static void Password()
         {
-
+            try
+            {
+                Console.Write("Current Users:");
+                Process.Start("cmd.exe", $"/c net user");
+                Thread.Sleep(100);
+                Console.WriteLine("Enter user you want to change password");
+                Console.Write(">");
+                string user = Console.ReadLine();
+                Console.WriteLine("Enter Password");
+                string pass = Console.ReadLine();
+                Process.Start("cmd.exe", $"/c net user {user} {pass}");
+                Console.WriteLine("Finished");
+                Console.ReadKey();
+            }
+            catch(Exception e)
+            {
+                Console.Clear();
+                Console.Write(e);
+                Console.ReadKey();
+                Menu();
+            }
         }
-        public static void Account()
+        public static void DisEnable()
         {
-
-        }
-        public static void Revert()
-        {
-
+            try
+            {
+                Console.Write("Current Users:");
+                Process.Start("cmd.exe", $"/c net user");
+                Thread.Sleep(100);
+                Console.WriteLine("Type {USER} {ENABLE\\DISABLE}");
+                Console.Write(">");
+                string endis = Console.ReadLine();
+                string[] myarray = new string[2];
+                myarray = endis.Split(' ');
+                if (myarray[1].ToLower() == "enable")
+                {
+                    Process.Start("cmd.exe", $"/c net user {myarray[0]} /active:yes");
+                }
+                if (myarray[1].ToLower() == "disable")
+                {
+                    Process.Start("cmd.exe", $"/c net user {myarray[0]} /active:no");
+                }
+                Console.WriteLine("Finished");
+                Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.Clear();
+                Console.Write(e);
+                Console.ReadKey();
+                Menu();
+            }
         }
     }
 }
