@@ -122,7 +122,7 @@ namespace Recovery
             try
             {
                 Console.Write("Current Users:");
-                Process.Start("cmd.exe", $"/c net user");
+                Process.Start("cmd.exe", "/c net user");
                 Thread.Sleep(100);
                 Console.WriteLine("Enter user you want to change password");
                 Console.Write(">");
@@ -146,7 +146,7 @@ namespace Recovery
             try
             {
                 Console.Write("Current Users:");
-                Process.Start("cmd.exe", $"/c net user");
+                Process.Start("cmd.exe", "/c net user");
                 Thread.Sleep(100);
                 Console.WriteLine("Type {USER} {ENABLE\\DISABLE}");
                 Console.Write(">");
