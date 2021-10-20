@@ -7,6 +7,8 @@ namespace Recovery
 {
     class Program
     {
+        //Need to add commands to allow users to go back to menu at any time
+        //Maybe redo how I handle changing passwords
         static void Main(string[] args)
         {
             string welcome = "This Application is used to recover a user or data without having to be logged in. You will need to use the \"switch\" at least once in the boot terminal for this to work";
@@ -63,7 +65,7 @@ namespace Recovery
                             try
                             {
                                 Process.Start("cmd.exe", $"/c shutdown /r");
-                                break
+                                break;
                             }
                             catch (Exception e)
                             {
